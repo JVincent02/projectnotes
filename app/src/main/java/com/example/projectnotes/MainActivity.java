@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.projectnotes.Adapter.SectionsAdapter;
+import com.example.projectnotes.Fragment.CardFragment;
 import com.example.projectnotes.Fragment.NoteFragment;
 import com.example.projectnotes.Utils.LockableViewPager;
 
@@ -39,9 +40,9 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
 
         viewPager.setSwipeable(false);
         sectionsAdapter = new SectionsAdapter(this, getSupportFragmentManager());
+
         viewPager.setAdapter(sectionsAdapter);
         viewPager.setCurrentItem(1);
-
 
     }
 
@@ -57,6 +58,16 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.noteTab:
+                viewPager.setCurrentItem(1);
+                break;
+            case R.id.alarmTab:
 
+                break;
+            case R.id.cardTab:
+                viewPager.setCurrentItem(0);
+                break;
+        }
     }
 }

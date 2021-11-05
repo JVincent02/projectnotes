@@ -9,9 +9,9 @@ public class AnimUtil {
     public static void expand(final View v,final View v2,final View v3, int duration, int targetWidth) {
 
         int prevWidth  = v.getWidth();
-        v.setVisibility(View.VISIBLE);
-        v2.setAlpha(1f);
-        v3.setAlpha(1f);
+        v2.setVisibility(View.VISIBLE);
+        //v2.setAlpha(1f);
+        v3.setAlpha(0f);
         if(prevWidth>0){
             v.getLayoutParams().width=0;
         }
@@ -24,12 +24,12 @@ public class AnimUtil {
             }
         });
 
-        ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(1f,0.5f);
+        ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(0f,0.5f);
         valueAnimator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                v2.setAlpha((float) animation.getAnimatedValue());
-                v2.requestLayout();
+                //v2.setAlpha((float) animation.getAnimatedValue());
+                //v2.requestLayout();
                 v3.setAlpha((float) animation.getAnimatedValue());
                 v3.requestLayout();
             }
@@ -47,7 +47,7 @@ public class AnimUtil {
 
     public static void collapse(final View v,final View v2,final View v3, int duration, int targetWidth) {
         int prevWidth  = v.getWidth();
-        float prev = v2.getAlpha();
+        float prev = v3.getAlpha();
         ValueAnimator valueAnimator = ValueAnimator.ofInt(prevWidth, targetWidth);
         valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -56,16 +56,16 @@ public class AnimUtil {
                 v.getLayoutParams().width = (int) animation.getAnimatedValue();
                 v.requestLayout();
                 if(v.getLayoutParams().width==targetWidth){
-                    v.setVisibility(View.GONE);
+                    v2.setVisibility(View.GONE);
                 }
             }
         });
-        ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(prev,1f);
+        ValueAnimator valueAnimator2 = ValueAnimator.ofFloat(prev,0f);
         valueAnimator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                v2.setAlpha((float) animation.getAnimatedValue());
-                v2.requestLayout();
+                //v2.setAlpha((float) animation.getAnimatedValue());
+                //v2.requestLayout();
                 v3.setAlpha((float) animation.getAnimatedValue());
                 v3.requestLayout();
             }

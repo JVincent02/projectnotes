@@ -34,13 +34,16 @@ import com.example.projectnotes.Utils.RecyclerItemClickListener;
 import java.util.Collections;
 import java.util.List;
 
-public class NoteFragment extends Fragment implements View.OnClickListener, NoteContentTouchListener, LineAdapter.LineAdapterListener {
+public class NoteFragment extends Fragment implements View.OnClickListener, NoteContentTouchListener, LineAdapter.LineAdapterListener, NoteAdapter.NoteAdapterListener {
 
     ImageView menuBtn;
     ImageView checkBtn;
     View drawerView;
-    View notesCon;
+    //View notesCon;
+    View drawerCon;
     View appBar;
+    View drawerBgView;
+
     RecyclerView drawerRV;
     RecyclerView noteContentRV;
     List<LineModel> lineModelList;
@@ -68,7 +71,9 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         menuBtn = root.findViewById(R.id.menuBtn);
         checkBtn = root.findViewById(R.id.checkBtn);
-        notesCon = root.findViewById(R.id.notesCon);
+        //notesCon = root.findViewById(R.id.notesCon);
+        drawerBgView = root.findViewById(R.id.drawerBgView);
+        drawerCon = root.findViewById(R.id.drawerCon);
         appBar= root.findViewById(R.id.appBar);
         drawerView = root.findViewById(R.id.drawerView);
         drawerRV= root.findViewById(R.id.drawerRV);
@@ -76,9 +81,10 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         menuBtn.setOnClickListener(this);
         checkBtn.setOnClickListener(this);
-        notesCon.setOnClickListener(this);
+        drawerCon.setOnClickListener(this);
+        //notesCon.setOnClickListener(this);
 
-        noteAdapter = new NoteAdapter( NoteModel.getSampleNotes());
+        noteAdapter = new NoteAdapter(this,NoteModel.getSampleNotes());
         drawerRV.setAdapter(noteAdapter);
         drawerRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -105,24 +111,29 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
             case R.id.menuBtn:
                     //appBar.setAlpha(0.5f);
                     //notesCon.setAlpha(0.5f);
-                    AnimUtil.expand(drawerView,notesCon,appBar,300, 800);
+                    AnimUtil.expand(drawerView,drawerCon,drawerBgView,300, 800);
+                clearEditMode();
+                    drawerCon.requestFocus();
                 break;
-            case R.id.notesCon:
-                    AnimUtil.collapse(drawerView,notesCon,appBar,300, 0);
+            case R.id.drawerCon:
+
+                    AnimUtil.collapse(drawerView,drawerCon,drawerBgView,300, 0);
                 break;
             case R.id.checkBtn:
-                checkBtn.setVisibility(View.GONE);
-                if (focused != null) {
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
-                }
+                clearEditMode();
                 noteFragmentListener.onKeyboardRelease();
-                noteContentRV.clearFocus();
                 noteContentTouchHelper.setDraggable(true);
                 break;
         }
     }
-
+    private void clearEditMode(){
+        checkBtn.setVisibility(View.GONE);
+        if (focused != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
+        }
+        noteContentRV.clearFocus();
+    }
     @Override
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(lineModelList,fromPos,toPos);
@@ -136,8 +147,14 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         focused = v;
     }
 
+    @Override
+    public void onNoteTitleClicked(int pos) {
+
+    }
+
     public interface NoteFragmentListener{
         void onEditTextClicked();
         void onKeyboardRelease();
     }
+
 }

@@ -16,5 +16,11 @@
     <dimen name="line_content_paddingright">12dp</dimen>
     <dimen name="line_content_paddingbottom">12dp</dimen>
 
+    <dimen name="line_subheader_text_size">18dp</dimen>
+    <dimen name="line_subheader_paddingleft">36dp</dimen>
+    <dimen name="line_subheader_paddingtop">12dp</dimen>
+    <dimen name="line_subheader_paddingright">12dp</dimen>
+    <dimen name="line_subheader_paddingbottom">12dp</dimen>
+
 
 </resources>

@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.wajahatkarim3.EasyFlipView:EasyFlipView:3.0.0'
     implementation 'com.nambimobile.widgets:expandable-fab:1.2.1'
     implementation "androidx.constraintlayout:constraintlayout:2.1.1"
     implementation 'de.hdodenhof:circleimageview:3.1.0'

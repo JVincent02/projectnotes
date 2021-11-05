@@ -27,6 +27,10 @@ public class LineModel {
         newLineModel.add(new LineModel("content",""));
         newLineModel.add(new LineModel("content","Tap anywhere and start typing"));
         newLineModel.add(new LineModel("content","Drag sections to reorder"));
+        newLineModel.add(new LineModel("subheader","Here are some sample definitions:"));
+        newLineModel.add(new LineModel("definition","안녕하세요!,The korean phrase for Good Day!"));
+        newLineModel.add(new LineModel("definition","すごい,The japanese word for incredible"));
+        newLineModel.add(new LineModel("definition","2021,Is the year this app is created"));
         return newLineModel;
     }
 }

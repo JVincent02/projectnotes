@@ -9,12 +9,17 @@
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/cursor.xml" value="0.15572916666666667" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/cursor_content.xml" value="0.15572916666666667" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_border_gray.xml" value="0.28489583333333335" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_shape.xml" value="0.2805128205128205" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/font/sans.xml" value="0.29435897435897435" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_card.xml" value="0.25" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_line.xml" value="0.22" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_note.xml" value="0.25" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_notecontent.xml" value="0.13958333333333334" />
-        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.2" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/card_back.xml" value="0.13958333333333334" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/card_front.xml" value="0.2" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_card.xml" value="0.27796610169491526" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.25" />
       </map>
     </option>
   </component>

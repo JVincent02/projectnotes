@@ -95,7 +95,6 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
         EditText lineTV = holder.lineTV;
         View lineCon = holder.lineCon;
 
-        lineTV.setText(lineModel.getContent());
         if(lineModel.getType().equals("header")){
             //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_HeaderContent);
             TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_HeaderContent);
@@ -109,6 +108,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             lineCon.setPadding(p0,p1,p2,p3);
             lp.setMargins(p0,p1,p2,p3);
             lineCon.setLayoutParams(lp);
+            lineTV.setText(lineModel.getContent());
         }else if(lineModel.getType().equals("content")){
             //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_Content);
             TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_Content);
@@ -122,6 +122,36 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             lineCon.setPadding(p0,p1,p2,p3);
             lp.setMargins(p0,p1,p2,p3);
             lineCon.setLayoutParams(lp);
+            lineTV.setText(lineModel.getContent());
+        }else if(lineModel.getType().equals("subheader")){
+            //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_Content);
+            TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_SubHeader);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                lineTV.setTextCursorDrawable(context.getResources().getDrawable(R.drawable.cursor_content));
+            }
+            int p0 = (int) context.getResources().getDimension(R.dimen.line_subheader_paddingleft)/2;
+            int p1 = (int) context.getResources().getDimension(R.dimen.line_subheader_paddingtop)/2;
+            int p2 = (int) context.getResources().getDimension(R.dimen.line_subheader_paddingright)/2;
+            int p3 = (int) context.getResources().getDimension(R.dimen.line_subheader_paddingbottom)/2;
+            lineCon.setPadding(p0,p1,p2,p3);
+            lp.setMargins(p0,p1,p2,p3);
+            lineCon.setLayoutParams(lp);
+            lineTV.setText(lineModel.getContent());
+        }else if(lineModel.getType().equals("definition")){
+            //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_Content);
+            TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_Content);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                lineTV.setTextCursorDrawable(context.getResources().getDrawable(R.drawable.cursor_content));
+            }
+            int p0 = (int) context.getResources().getDimension(R.dimen.line_content_paddingleft)/2;
+            int p1 = (int) context.getResources().getDimension(R.dimen.line_content_paddingtop)/2;
+            int p2 = (int) context.getResources().getDimension(R.dimen.line_content_paddingright)/2;
+            int p3 = (int) context.getResources().getDimension(R.dimen.line_content_paddingbottom)/2;
+            lineCon.setPadding(p0,p1,p2,p3);
+            lp.setMargins(p0,p1,p2,p3);
+            lineCon.setLayoutParams(lp);
+            String[] qa = lineModel.getContent().split(",");
+            lineTV.setText(qa[0]+": "+qa[1]);
         }
 
     }

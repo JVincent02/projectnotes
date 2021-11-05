@@ -23,7 +23,7 @@ public class NoteModel {
 
     public static List<NoteModel> getSampleNotes() {
         List<NoteModel> newNoteModel = new ArrayList<NoteModel>();
-        newNoteModel.add(new NoteModel("Test1", null));
+        newNoteModel.add(new NoteModel("Home", LineModel.getSampleLines()));
         newNoteModel.add(new NoteModel("Test2", null));
         newNoteModel.add(new NoteModel("Test3", null));
         newNoteModel.add(new NoteModel("Test4", null));

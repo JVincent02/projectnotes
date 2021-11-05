@@ -23,11 +23,9 @@ public class SectionsAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                CardFragment.newInstance();
-                break;
+                return CardFragment.newInstance();
             case 1:
-                NoteFragment.newInstance();
-                break;
+                return NoteFragment.newInstance();
             default:
                 return NoteFragment.newInstance();
         }
@@ -37,5 +35,9 @@ public class SectionsAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return 3;
+    }
+
+    public void setNoteAdapter(NoteAdapter n){
+
     }
 }

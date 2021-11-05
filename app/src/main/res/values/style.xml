@@ -10,5 +10,10 @@
         <item name="android:fontFamily">@font/sansreg</item>
         <item name="android:textColor">@color/darkgray</item>
     </style>
+    <style name="TextAppearance.AppCompat.SubHeader">
+        <item name="android:textSize">@dimen/line_subheader_text_size</item>
+        <item name="android:fontFamily">@font/sansmed</item>
+        <item name="android:textColor">@color/darkgray</item>
+    </style>
 
 </resources>
