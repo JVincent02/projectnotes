@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="Note_Title_Appbar">20dp</dimen>
+    <dimen name="Drawer_Text_Size">16dp</dimen>
+    <dimen name="Drawer_divider_padding">12dp</dimen>
+
+    <dimen name="line_header_text_size">36dp</dimen>
+    <dimen name="line_header_paddingleft">24dp</dimen>
+    <dimen name="line_header_paddingtop">12dp</dimen>
+    <dimen name="line_header_paddingright">12dp</dimen>
+    <dimen name="line_header_paddingbottom">12dp</dimen>
+
+    <dimen name="line_content_text_size">18dp</dimen>
+    <dimen name="line_content_paddingleft">48dp</dimen>
+    <dimen name="line_content_paddingtop">12dp</dimen>
+    <dimen name="line_content_paddingright">12dp</dimen>
+    <dimen name="line_content_paddingbottom">12dp</dimen>
+
+
+</resources>

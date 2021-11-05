@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0"
+        android:paddingTop="12dp"
+        android:background="@drawable/bottm_divider"
+        >
+        <ImageView
+            android:id="@+id/menuBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            android:src="@drawable/menu"
+            android:layout_width="45dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="6dp"
+            android:layout_height="45dp">
+        </ImageView>
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/checkBtn"
+            android:src="@drawable/check"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            android:layout_width="45dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="6dp"
+            android:layout_height="45dp"/>
+        <TextView
+            android:text="Home"
+            android:paddingLeft="15dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/darkgray"
+            android:textSize="@dimen/Note_Title_Appbar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@+id/menuBtn"
+            app:layout_constraintRight_toLeftOf="@+id/checkBtn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:fontFamily="@font/sansmed"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout
+    android:id="@+id/notesCon"
+    app:layout_constraintTop_toBottomOf="@id/appBar"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="0dp">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/noteContentRV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+/>
+
+</LinearLayout>
+
+    <LinearLayout
+        android:clickable="true"
+        android:id="@+id/drawerView"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="12dp"
+            android:background="@drawable/bottm_divider"
+            >
+            <de.hdodenhof.circleimageview.CircleImageView
+                app:civ_border_width="0.5dp"
+                app:civ_border_color="#ccc"
+                android:paddingTop="6dp"
+                android:paddingBottom="12dp"
+                android:src="@drawable/cat"
+                android:layout_width="45dp"
+                android:layout_height="45dp"/>
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="User's Name"
+                android:textSize="16dp"
+                android:paddingLeft="5dp"
+                android:paddingBottom="8dp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/drawerRV"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+<com.nambimobile.widgets.efab.ExpandableFabLayout
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintHorizontal_bias="1"
+    app:layout_constraintVertical_bias="1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.nambimobile.widgets.efab.Overlay
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:overlay_orientation="portrait"/>
+    <com.nambimobile.widgets.efab.ExpandableFab
+        app:efab_closingAnticipateTension="0"
+        app:efab_iconAnimationRotationDeg="-225"
+        app:efab_icon="@drawable/write"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="10dp"
+        app:efab_orientation="portrait"/>
+    <com.nambimobile.widgets.efab.FabOption
+        android:id="@+id/addDefinitionBtn"
+        app:fab_icon="@drawable/definition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_orientation="portrait"
+        app:label_text="Add Definition" />
+
+    <com.nambimobile.widgets.efab.FabOption
+        android:id="@+id/addContentBtn"
+        app:fab_icon="@drawable/paragraph"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_orientation="portrait"
+        app:label_text="Add Paragraph" />
+    <com.nambimobile.widgets.efab.FabOption
+        android:id="@+id/addHeaderBtn"
+        app:fab_icon="@drawable/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_orientation="portrait"
+        app:label_text="Add Header" />
+    <com.nambimobile.widgets.efab.FabOption
+        android:id="@+id/addSubtitleBtn"
+        app:fab_icon="@drawable/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_orientation="portrait"
+        app:label_text="Add Subtitle" />
+</com.nambimobile.widgets.efab.ExpandableFabLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

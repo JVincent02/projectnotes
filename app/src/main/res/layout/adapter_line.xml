@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/lineCon"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:animateLayoutChanges="true"
+    >
+    <EditText
+        android:textCursorDrawable="@drawable/cursor_content"
+        android:longClickable="false"
+        android:background="@null"
+        android:text="Getting Started"
+        android:id="@+id/lineTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

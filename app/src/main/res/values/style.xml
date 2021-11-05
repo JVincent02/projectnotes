@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.AppCompat.HeaderContent">
+        <item name="android:textSize">@dimen/line_header_text_size</item>
+        <item name="android:fontFamily">@font/sansbold</item>
+        <item name="android:textColor">@color/darkgray</item>
+    </style>
+    <style name="TextAppearance.AppCompat.Content">
+        <item name="android:textSize">@dimen/line_content_text_size</item>
+        <item name="android:fontFamily">@font/sansreg</item>
+        <item name="android:textColor">@color/darkgray</item>
+    </style>
+
+</resources>
