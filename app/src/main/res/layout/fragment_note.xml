@@ -149,6 +149,8 @@
             app:overlay_orientation="portrait" />
 
         <com.nambimobile.widgets.efab.ExpandableFab
+            android:id="@+id/fabBtn"
+            app:efab_color="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -161,6 +163,7 @@
             app:efab_orientation="portrait" />
 
         <com.nambimobile.widgets.efab.FabOption
+            app:fab_color="@color/white"
             android:id="@+id/addDefinitionBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -169,6 +172,7 @@
             app:label_text="Add Definition" />
 
         <com.nambimobile.widgets.efab.FabOption
+            app:fab_color="@color/white"
             android:id="@+id/addContentBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -177,6 +181,7 @@
             app:label_text="Add Paragraph" />
 
         <com.nambimobile.widgets.efab.FabOption
+            app:fab_color="@color/white"
             android:id="@+id/addHeaderBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -185,6 +190,7 @@
             app:label_text="Add Header" />
 
         <com.nambimobile.widgets.efab.FabOption
+            app:fab_color="@color/white"
             android:id="@+id/addSubtitleBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -192,4 +198,7 @@
             app:fab_orientation="portrait"
             app:label_text="Add Subtitle" />
     </com.nambimobile.widgets.efab.ExpandableFabLayout>
+
+    <include layout="@layout/layout_add_definition"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

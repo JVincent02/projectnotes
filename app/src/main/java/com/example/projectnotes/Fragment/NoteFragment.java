@@ -3,16 +3,12 @@ package com.example.projectnotes.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,7 +25,6 @@ import com.example.projectnotes.R;
 import com.example.projectnotes.Utils.AnimUtil;
 import com.example.projectnotes.Utils.NoteContentTouchHelper;
 import com.example.projectnotes.Utils.NoteContentTouchListener;
-import com.example.projectnotes.Utils.RecyclerItemClickListener;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +39,19 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     View appBar;
     View drawerBgView;
 
+    //For fab buttons
+    View addDefinitionBtn;
+    View addContentBtn;
+    View addHeaderBtn;
+    View addSubtitleBtn;
+    View fabBtn;
+
+    View addDefCon;
+    View confirmBtn;
+    View exitBtn;
+    EditText termTV;
+    EditText definitionTV;
+
     RecyclerView drawerRV;
     RecyclerView noteContentRV;
     List<LineModel> lineModelList;
@@ -52,6 +60,12 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     LineAdapter lineAdapter;
     View focused;
     NoteFragmentListener noteFragmentListener;
+
+    List<NoteModel> noteModels;
+
+    boolean isFabClicked = false;
+    boolean editOnly = false;
+    int rvpos=-1;
 
     public static NoteFragment newInstance() {
         NoteFragment fragment = new NoteFragment();
@@ -69,6 +83,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_note, container, false);
 
+        noteModels = ((MainActivity)getActivity()).getNoteModels();
+
         menuBtn = root.findViewById(R.id.menuBtn);
         checkBtn = root.findViewById(R.id.checkBtn);
         //notesCon = root.findViewById(R.id.notesCon);
@@ -78,21 +94,42 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         drawerView = root.findViewById(R.id.drawerView);
         drawerRV= root.findViewById(R.id.drawerRV);
         noteContentRV = root.findViewById(R.id.noteContentRV);
+        //for fab buttons
+        addDefinitionBtn = root.findViewById(R.id.addDefinitionBtn);
+        addContentBtn= root.findViewById(R.id.addContentBtn);
+        addHeaderBtn= root.findViewById(R.id.addHeaderBtn);
+        addSubtitleBtn= root.findViewById(R.id.addSubtitleBtn);
+        fabBtn= root.findViewById(R.id.fabBtn);
+        // add def
+        addDefCon = root.findViewById(R.id.addDefCon);
+        confirmBtn = root.findViewById(R.id.addDefConfirmBtn);
+        exitBtn = root.findViewById(R.id.addDefExitBtn);
+        termTV = root.findViewById(R.id.termTV);
+        definitionTV = root.findViewById(R.id.definitionTV);
 
         menuBtn.setOnClickListener(this);
         checkBtn.setOnClickListener(this);
         drawerCon.setOnClickListener(this);
+        //for fab buttons
+        addDefinitionBtn.setOnClickListener(this);
+        addHeaderBtn.setOnClickListener(this);
+        addContentBtn.setOnClickListener(this);
+        addSubtitleBtn.setOnClickListener(this);
+        fabBtn.setOnClickListener(this);
+
+        confirmBtn.setOnClickListener(this);
+        exitBtn.setOnClickListener(this);
+
         //notesCon.setOnClickListener(this);
 
-        noteAdapter = new NoteAdapter(this,NoteModel.getSampleNotes());
+        noteAdapter = new NoteAdapter(this,noteModels);
         drawerRV.setAdapter(noteAdapter);
         drawerRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        lineModelList = LineModel.getSampleLines();
         noteContentTouchHelper = new NoteContentTouchHelper();
         noteContentTouchHelper.setNoteContentTouchListener(this);
 
-
+        lineModelList = noteModels.get(0).getLines();
         lineAdapter = new LineAdapter(this,lineModelList);
         noteContentRV.setAdapter(lineAdapter);
         noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -100,6 +137,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         contentTouchHelper.attachToRecyclerView(noteContentRV);
 
         noteFragmentListener = (NoteFragmentListener) getActivity();
+
+
 
         return root;
     }
@@ -124,15 +163,61 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 noteFragmentListener.onKeyboardRelease();
                 noteContentTouchHelper.setDraggable(true);
                 break;
+            //For fab buttons
+            case R.id.addContentBtn:
+                addLine("content","");
+                break;
+            case R.id.addDefinitionBtn:
+                termTV.setText("");
+                definitionTV.setText("");
+                addDefCon.setVisibility(View.VISIBLE);
+                break;
+            case R.id.addHeaderBtn:
+                addLine("subheader","");
+                break;
+            case R.id.addSubtitleBtn:
+                addLine("header","");
+                break;
+            case R.id.fabBtn:
+                isFabClicked=true;
+                break;
+            case R.id.addDefConfirmBtn:
+                if(!editOnly) addLine("definition",getDef());
+                else editLine();
+                addDefCon.setVisibility(View.GONE);
+                focused = addDefCon;
+                clearEditMode();
+                editOnly=false;
+                break;
+            case R.id.addDefExitBtn:
+                addDefCon.setVisibility(View.GONE);
+                clearEditMode();
+                break;
         }
     }
+    private void editLine(){
+        lineModelList.get(rvpos).setContent(getDef());
+        lineAdapter.notifyItemChanged(rvpos);
+    }
+    private String getDef(){
+        String o="";
+        o = termTV.getText().toString()+","+definitionTV.getText().toString();
+        termTV.setText("");
+        definitionTV.setText("");
+        return o;
+    }
+    private void addLine(String type,String con){
+        lineModelList.add(new LineModel(type,con));
+        lineAdapter.notifyItemInserted(lineModelList.size() - 1);
+        noteContentRV.scrollToPosition(lineModelList.size()-1);
+    }
     private void clearEditMode(){
-        checkBtn.setVisibility(View.GONE);
         if (focused != null) {
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
         }
         noteContentRV.clearFocus();
+        checkBtn.setVisibility(View.GONE);
     }
     @Override
     public void onItemMove(int fromPos, int toPos) {
@@ -140,11 +225,40 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     }
 
     @Override
-    public void onEditTextClicked(View v) {
+    public void onEditTextClicked(View v,String[] content,int pos) {
+        Log.v("c","is for clicked");
+        rvpos=pos;
+        if(content==null) {
+            editModeOn(v);
+        }
+        else{
+            editOnly = true;
+            addDefCon.setVisibility(View.VISIBLE);
+            termTV.setText(content[0]);
+            definitionTV.setText(content[1]);
+        }
+
+    }
+
+    private void  editModeOn(View v){
         noteFragmentListener.onEditTextClicked();
         noteContentTouchHelper.setDraggable(false);
         checkBtn.setVisibility(View.VISIBLE);
         focused = v;
+        Log.v("editmodecleared","yes" );
+    }
+
+    @Override
+    public boolean getFabStatus() {
+        return isFabClicked;
+    }
+
+    @Override
+    public void onRequestFocus(View v,String[] content) {
+        if(content==null) {
+            editModeOn(v);
+        }
+        isFabClicked=false;
     }
 
     @Override

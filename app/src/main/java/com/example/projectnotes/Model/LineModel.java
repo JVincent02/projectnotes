@@ -20,6 +20,10 @@ public class LineModel {
         return this.content;
     }
 
+    public void setContent(String content){
+        this.content = content;
+    }
+
     public static List<LineModel> getSampleLines(){
         List<LineModel> newLineModel = new ArrayList<LineModel>();
         newLineModel.add(new LineModel("header","Getting Started on Mobile"));

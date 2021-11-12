@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -33,6 +34,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
 
         public EditText lineTV;
         public View lineCon;
+        public String[] content;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -59,6 +61,19 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
 
 
     @Override
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if(context.getFabStatus()) {
+            holder.lineTV.requestFocus();
+            InputMethodManager imm = (InputMethodManager) context.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(holder.lineTV, InputMethodManager.SHOW_IMPLICIT);
+            context.onRequestFocus(holder.lineTV,holder.content);
+        }
+        //context.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        Log.v("How many times",context.getFabStatus()?"yes":"no");
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull LineAdapter.ViewHolder holder, int position) {
         LineModel lineModel = lineModelList.get(position);
         populateLine(lineModel,holder);
@@ -76,7 +91,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(MotionEvent.ACTION_UP == event.getAction()){
-                    context.onEditTextClicked(v);
+                    context.onEditTextClicked(v,holder.content,holder.getAdapterPosition());
                     Log.v("clicky","clicked");
                 }
                 return false;
@@ -139,6 +154,8 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             lineTV.setText(lineModel.getContent());
         }else if(lineModel.getType().equals("definition")){
             //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_Content);
+            lineTV.setClickable(false);
+            lineTV.setFocusable(false);
             TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_Content);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 lineTV.setTextCursorDrawable(context.getResources().getDrawable(R.drawable.cursor_content));
@@ -152,12 +169,15 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             lineCon.setLayoutParams(lp);
             String[] qa = lineModel.getContent().split(",");
             lineTV.setText(qa[0]+": "+qa[1]);
+            holder.content = new String[]{qa[0], qa[1]};
         }
 
     }
 
     public interface LineAdapterListener{
-        void onEditTextClicked(View v);
+        void onEditTextClicked(View v,String[] content,int pos);
+        boolean getFabStatus();
+        void onRequestFocus(View v,String[] content);
     }
 
 }

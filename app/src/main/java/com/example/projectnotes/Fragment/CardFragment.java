@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectnotes.Adapter.CardAdapter;
 import com.example.projectnotes.Adapter.NoteAdapter;
+import com.example.projectnotes.MainActivity;
 import com.example.projectnotes.Model.CardModel;
 import com.example.projectnotes.Model.NoteModel;
 import com.example.projectnotes.R;
-import com.wajahatkarim3.easyflipview.EasyFlipView;
 
 import java.util.List;
 
@@ -30,6 +30,14 @@ public class CardFragment extends Fragment implements NoteAdapter.NoteAdapterLis
     public static CardFragment newInstance() {
         CardFragment fragment = new CardFragment();
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(cardAdapter!=null){
+            cardAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -48,7 +56,7 @@ public class CardFragment extends Fragment implements NoteAdapter.NoteAdapterLis
         cardsRV = root.findViewById(R.id.cardsRV);
 
         //cardListRV.setAdapter(noteAdapter);
-        noteModels = NoteModel.getSampleNotes();
+        noteModels = ((MainActivity)getActivity()).getNoteModels();
         noteAdapter= new NoteAdapter(this,noteModels);
         cardListRV.setAdapter(noteAdapter);
         cardListRV.setLayoutManager(new LinearLayoutManager(this.getContext()));

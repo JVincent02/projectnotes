@@ -1,16 +1,16 @@
 package com.example.projectnotes;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.projectnotes.Adapter.SectionsAdapter;
-import com.example.projectnotes.Fragment.CardFragment;
 import com.example.projectnotes.Fragment.NoteFragment;
+import com.example.projectnotes.Model.NoteModel;
 import com.example.projectnotes.Utils.LockableViewPager;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.NoteFragmentListener, View.OnClickListener {
 
@@ -21,12 +21,16 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
     View noteTab;
     View alarmTab;
 
+    List<NoteModel> notemodels;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        notemodels = NoteModel.getSampleNotes();
 
         viewPager = findViewById(R.id.sectionVP);
         tabCon = findViewById(R.id.tabCon);
@@ -63,11 +67,14 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                 viewPager.setCurrentItem(1);
                 break;
             case R.id.alarmTab:
-
+                viewPager.setCurrentItem(2);
                 break;
             case R.id.cardTab:
                 viewPager.setCurrentItem(0);
                 break;
         }
+    }
+    public List<NoteModel> getNoteModels(){
+        return notemodels;
     }
 }

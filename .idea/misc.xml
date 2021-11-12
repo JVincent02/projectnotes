@@ -8,18 +8,32 @@
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/bottm_divider.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/cursor.xml" value="0.15572916666666667" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/cursor_content.xml" value="0.15572916666666667" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/divider.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/ic_alarm_white.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_border_gray.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_shape.xml" value="0.2805128205128205" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_shape_white.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/font/sans.xml" value="0.29435897435897435" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_add_alarm.xml" value="0.26875" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_alarm_landing_page.xml" value="0.26875" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_edit_alarm.xml" value="0.22" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_main.xml" value="0.18" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_card.xml" value="0.25" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_line.xml" value="0.22" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_note.xml" value="0.25" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_notecontent.xml" value="0.13958333333333334" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/alarm_row.xml" value="0.26875" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/card_back.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/card_front.xml" value="0.2" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_add_edit_alarm.xml" value="0.18" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_alarm.xml" value="0.26875" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_alarm_landing_page.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_card.xml" value="0.27796610169491526" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.25" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_timepicker.xml" value="0.2" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/layout/layout_add_definition.xml" value="0.25" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/menu/edit_alarm_menu.xml" value="0.26875" />
+        <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.140625" />
       </map>
     </option>
   </component>
