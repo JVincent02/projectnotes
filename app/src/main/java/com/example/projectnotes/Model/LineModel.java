@@ -1,5 +1,9 @@
 package com.example.projectnotes.Model;
 
+import android.graphics.Bitmap;
+
+import com.example.projectnotes.Utils.StringBitmapUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,10 +11,17 @@ public class LineModel {
     int line;
     String type;
     String content;
+    String bitImg;
+    Bitmap img;
 
     public LineModel(String type,String content){
         this.type = type;
         this.content = content;
+    }
+    public LineModel(String type,Bitmap img){
+        this.type = type;
+        this.img = img;
+        this.bitImg = StringBitmapUtil.getStringFromBitmap(img);
     }
 
     public String getType(){
@@ -19,15 +30,20 @@ public class LineModel {
     public String getContent(){
         return this.content;
     }
+    public Bitmap getImage(){return this.img;}
+    public String getImageString(){return this.bitImg;}
 
     public void setContent(String content){
         this.content = content;
+    }
+    public void setType(String type){
+        this.type = type;
     }
 
     public static List<LineModel> getSampleLines(){
         List<LineModel> newLineModel = new ArrayList<LineModel>();
         newLineModel.add(new LineModel("header","Getting Started on Mobile"));
-        newLineModel.add(new LineModel("content","Welcome to Project Notes!"));
+        newLineModel.add(new LineModel("content,0","Welcome to Project Notes!"));
         newLineModel.add(new LineModel("content",""));
         newLineModel.add(new LineModel("content","Tap anywhere and start typing"));
         newLineModel.add(new LineModel("content","Drag sections to reorder"));

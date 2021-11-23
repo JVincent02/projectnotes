@@ -81,6 +81,7 @@ public class NoteContentTouchHelper extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         Log.v("dir",String.valueOf(direction));
+        noteContentTouchListener.onItemSwiped(viewHolder.getAdapterPosition());
     }
 
     public static void setViewBackgroundWithoutResettingPadding(final View v, final int backgroundResId) {

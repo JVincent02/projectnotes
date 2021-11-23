@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_main.xml" value="0.14010416666666667" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_line.xml" value="0.22282608695652173" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.18" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable-v24/bottm_divider.xml" value="0.15572916666666667" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable-v24/light_divider.xml" value="0.28489583333333335" />
         <entry key="..\:/Users/j_vin/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/bottm_divider.xml" value="0.28489583333333335" />
