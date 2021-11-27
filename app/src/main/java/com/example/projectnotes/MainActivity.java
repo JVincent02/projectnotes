@@ -5,14 +5,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.projectnotes.Adapter.SectionsAdapter;
 import com.example.projectnotes.Fragment.NoteFragment;
 import com.example.projectnotes.Model.NoteModel;
+import com.example.projectnotes.Model.UserModel;
 import com.example.projectnotes.Utils.KeyboardUtil;
 import com.example.projectnotes.Utils.LockableViewPager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -24,6 +32,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.NoteFragmentListener, View.OnClickListener {
@@ -36,16 +46,28 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
     View noteTab;
     View alarmTab;
     Gson gson;
-
-
-    List<NoteModel> notemodels;
+    String email;
+    String uid;
+    UserModel userModel;
+    FirebaseDatabase database;
+    DatabaseReference userRef;
+    //List<NoteModel> notemodels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle bundle = getIntent().getExtras();
+        email = bundle.getString("email");
+        uid = bundle.getString("uid");
+        database = FirebaseDatabase.getInstance();
+        userRef = database.getReference("users");
         gson = new Gson();
-        notemodels = readSavedNotes();
+        userModel = readUser();
+        updateFirebase();
+        //userModel.setNotes(readSavedNotes());
+
+        //writeToFirebase(gson.toJson(userModel));
 //        sharedPreferences = getSharedPreferences("notes",MODE_PRIVATE);
 //        String notes = sharedPreferences.getString("notes","");
 //        if(notes.equals("")){
@@ -78,22 +100,80 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
         viewPager.setCurrentItem(1);
 
     }
-    private void saveNotes(List<NoteModel> noteModelList){
-        String json = gson.toJson(noteModelList);
+
+    private Date getCurrentDate() {
+        return Calendar.getInstance().getTime();
+    }
+
+    private void saveUser(UserModel user) {
+        user.setDate(getCurrentDate());
+        String json = gson.toJson(user);
         try {
-            File file = new File(getFilesDir(),"Notes.json");
+            File file = new File(getFilesDir(), "User.json");
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(json);
             bufferedWriter.close();
-        }catch (IOException e){
-            Log.e("exception sa io",e.getMessage());
+        } catch (IOException e) {
+            Log.e("exception sa io", e.getMessage());
         }
     }
-    private List<NoteModel> readSavedNotes(){
-        String notes="";
+
+    private void writeToFirebase(String json) {
+        userRef.setValue(json);
+    }
+
+    private void updateFirebase() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+/*                String snap = snapshot.getValue(String.class);
+                UserModel dbUser = gson.fromJson(snap,UserModel.class);
+                if(dbUser.getDate().compareTo(userModel.getDate())>0){
+                    userModel = dbUser;
+                }else if(dbUser.getDate().compareTo(userModel.getDate())<0){
+                    writeToFirebase(gson.toJson(userModel));
+                }*/
+                String snap = snapshot.getValue(String.class);
+                UserModel dbUser = gson.fromJson(snap, UserModel.class);
+                UserModel svUser = userModel;
+                if (dbUser == null) {
+                    svUser.setDate(getCurrentDate());
+                    writeToFirebase(gson.toJson(svUser));
+                }else{
+                    if(svUser.getDate()==null){
+                        saveUser(dbUser);
+                        userModel = dbUser;
+                        sectionsAdapter.noteFragment().updateNoteFragment();
+                    }else{
+                        if(dbUser.getDate().compareTo(svUser.getDate())>0){
+                            saveUser(dbUser);
+                            userModel = dbUser;
+                            sectionsAdapter.noteFragment().updateNoteFragment();
+                        }else if(dbUser.getDate().compareTo(svUser.getDate())<0){
+                            writeToFirebase(gson.toJson(userModel));
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Log.wtf("etoerror", error.getMessage());
+            }
+        });
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    private UserModel readUser() {
+        String user = "";
         try {
-            File file = new File(getFilesDir(), "Notes.json");
+            File file = new File(getFilesDir(), "User.json");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             StringBuilder stringBuilder = new StringBuilder();
@@ -103,17 +183,21 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                 line = bufferedReader.readLine();
             }
             bufferedReader.close();
-            notes = stringBuilder.toString();
-        }catch (IOException e){
-            Log.e("error",e.getMessage());
+            user = stringBuilder.toString();
+        } catch (IOException e) {
+            Log.e("error", e.getMessage());
         }
-        if(!notes.equals(""))
-        return Arrays.asList(new GsonBuilder().create().fromJson(notes, NoteModel[].class));
-        else{
-            saveNotes(NoteModel.getSampleNotes());
-            return NoteModel.getSampleNotes();
+        if (!user.equals(""))
+            return gson.fromJson(user, UserModel.class);
+        else {
+            return createNewUser();
         }
     }
+
+    private UserModel createNewUser() {
+        return new UserModel(uid, email, NoteModel.getSampleNotes());
+    }
+
     @Override
     public void onEditTextClicked() {
         tabCon.setVisibility(View.GONE);
@@ -121,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
 
     @Override
     public void onKeyboardRelease() {
-        Log.wtf("maiact","release");
+        Log.wtf("maiact", "release");
 
         //KeyboardUtil.hideKeyboard(this);
         getWindow().setSoftInputMode(
@@ -137,12 +221,13 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
 //        editor.putString("notes",json);
 //        editor.apply();
 //        Log.v("main","saved");
-        saveNotes(notemodels);
+        saveUser(userModel);
+        updateFirebase();
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.noteTab:
                 viewPager.setCurrentItem(1);
                 break;
@@ -154,7 +239,8 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                 break;
         }
     }
-    public List<NoteModel> getNoteModels(){
-        return notemodels;
+
+    public List<NoteModel> getNoteModels() {
+        return userModel.getNotes();
     }
 }

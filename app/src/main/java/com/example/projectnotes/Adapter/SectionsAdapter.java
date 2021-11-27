@@ -14,23 +14,36 @@ import com.example.projectnotes.Fragment.NoteFragment;
 public class SectionsAdapter extends FragmentPagerAdapter {
 
     private final Context mContext;
-
+    CardFragment cardFragment;
+    NoteFragment noteFragment;
+    AlarmFragment alarmFragment;
     public SectionsAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
+        cardFragment = CardFragment.newInstance();
+        noteFragment = NoteFragment.newInstance();
+        alarmFragment = AlarmFragment.newInstance();
     }
-
+    public CardFragment cardFragment(){
+        return cardFragment;
+    }
+    public NoteFragment noteFragment(){
+        return noteFragment;
+    }
+    public AlarmFragment alarmFragment(){
+        return alarmFragment;
+    }
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return CardFragment.newInstance();
+                return cardFragment;
             case 1:
-                return NoteFragment.newInstance();
+                return noteFragment;
             case 2:
-                return AlarmFragment.newInstance();
+                return alarmFragment;
             default:
-                return NoteFragment.newInstance();
+                return noteFragment;
         }
     }
 
@@ -40,7 +53,4 @@ public class SectionsAdapter extends FragmentPagerAdapter {
         return 3;
     }
 
-    public void setNoteAdapter(NoteAdapter n){
-
-    }
 }

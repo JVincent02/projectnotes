@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -44,6 +45,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     View drawerCon;
     View appBar;
     View drawerBgView;
+    TextView emailDisplayTV;
     //For keyboard buttons
     View italicsBtn;
     View boldBtn;
@@ -63,6 +65,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     EditText termTV;
     EditText definitionTV;
 
+
     RecyclerView drawerRV;
     RecyclerView noteContentRV;
     List<LineModel> lineModelList;
@@ -71,11 +74,11 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     LineAdapter lineAdapter;
     View focused;
     NoteFragmentListener noteFragmentListener;
-
+    MainActivity mainActivity;
     List<NoteModel> noteModels;
 
     boolean[] keyboardStates = {false,false,false};
-
+    boolean ready=false;
     boolean isFabClicked = false;
     boolean editOnly = false;
     int rvpos=-1;
@@ -96,14 +99,15 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_note, container, false);
-
-        noteModels = ((MainActivity)getActivity()).getNoteModels();
+        mainActivity = ((MainActivity)getActivity());
+        noteModels = mainActivity.getNoteModels();
 
         menuBtn = root.findViewById(R.id.menuBtn);
         checkBtn = root.findViewById(R.id.checkBtn);
         //notesCon = root.findViewById(R.id.notesCon);
         drawerBgView = root.findViewById(R.id.drawerBgView);
         drawerCon = root.findViewById(R.id.drawerCon);
+        emailDisplayTV = root.findViewById(R.id.emailDisplayTV);
         appBar= root.findViewById(R.id.appBar);
         drawerView = root.findViewById(R.id.drawerView);
         drawerRV= root.findViewById(R.id.drawerRV);
@@ -155,6 +159,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         noteContentTouchHelper.setNoteContentTouchListener(this);
 
         lineModelList = noteModels.get(0).getLines();
+
         lineAdapter = new LineAdapter(this,lineModelList);
         noteContentRV.setAdapter(lineAdapter);
         noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -163,9 +168,9 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         contentTouchHelper.attachToRecyclerView(noteContentRV);
 
         noteFragmentListener = (NoteFragmentListener) getActivity();
-
-
-
+        String email = ((MainActivity)getActivity()).getEmail().split("@")[0]+"'s Notes";
+        emailDisplayTV.setText(email);
+        ready=true;
         return root;
     }
 
@@ -239,6 +244,32 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 keyboardStates[2]=!keyboardStates[2];
                 updateKeys();
                 break;
+        }
+    }
+    public void updateNoteFragment(){
+        if(ready) {
+            noteModels = mainActivity.getNoteModels();
+            noteAdapter = new NoteAdapter(this,noteModels);
+            drawerRV.setAdapter(noteAdapter);
+            drawerRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+            noteContentTouchHelper = new NoteContentTouchHelper();
+            noteContentTouchHelper.setNoteContentTouchListener(this);
+
+            lineModelList = noteModels.get(0).getLines();
+
+            lineAdapter = new LineAdapter(this,lineModelList);
+            noteContentRV.setAdapter(lineAdapter);
+            noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
+            noteContentRV.setItemViewCacheSize(50);
+            ItemTouchHelper contentTouchHelper = new ItemTouchHelper(noteContentTouchHelper);
+            contentTouchHelper.attachToRecyclerView(noteContentRV);
+
+            noteFragmentListener = (NoteFragmentListener) getActivity();
+            String email = ((MainActivity)getActivity()).getEmail().split("@")[0]+"'s Notes";
+            emailDisplayTV.setText(email);
+
+            Log.wtf("etoerror","pumasoknoob");
         }
     }
     private void updateKeys(){

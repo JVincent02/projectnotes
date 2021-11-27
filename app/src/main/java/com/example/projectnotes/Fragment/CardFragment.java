@@ -26,6 +26,7 @@ public class CardFragment extends Fragment implements NoteAdapter.NoteAdapterLis
     RecyclerView cardsRV;
     List<NoteModel> noteModels;
     CardAdapter cardAdapter;
+    MainActivity mainActivity;
 
     public static CardFragment newInstance() {
         CardFragment fragment = new CardFragment();
@@ -51,12 +52,12 @@ public class CardFragment extends Fragment implements NoteAdapter.NoteAdapterLis
             Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_card, container, false);
-
+        mainActivity = (MainActivity)getActivity();
         cardListRV = root.findViewById(R.id.cardListRV);
         cardsRV = root.findViewById(R.id.cardsRV);
 
         //cardListRV.setAdapter(noteAdapter);
-        noteModels = ((MainActivity)getActivity()).getNoteModels();
+        noteModels = mainActivity.getNoteModels();
         noteAdapter= new NoteAdapter(this,noteModels);
         cardListRV.setAdapter(noteAdapter);
         cardListRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
