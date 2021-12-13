@@ -30,8 +30,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.projectnotes.Fragment.NoteFragment;
 import com.example.projectnotes.Model.LineModel;
 import com.example.projectnotes.R;
+import com.example.projectnotes.Utils.StoreImagesUtil;
 import com.example.projectnotes.Utils.StringBitmapUtil;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
@@ -180,6 +183,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
 
 
     public void populateLine(LineModel lineModel, ViewHolder holder){
+        Log.wtf("howslow","thismuch");
         EditText lineTV = holder.lineTV;
         ImageView lineIV = holder.lineIV;
         View lineCon = holder.lineCon;
@@ -203,7 +207,13 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
         }else if(type[0].equals("image")){
             lineTV.setVisibility(View.GONE);
             lineIV.setVisibility(View.VISIBLE);
-            lineIV.setImageBitmap(StringBitmapUtil.getBitmapFromString(lineModel.getImageString()));
+            //lineIV.setImageBitmap(StringBitmapUtil.getBitmapFromString(lineModel.getImageString()));
+            File f = new File(context.getActivity().getFilesDir(),lineModel.getImgKey());
+            if(f.exists()) {
+                Picasso.get().load(f).placeholder(context.getActivity().getResources().getDrawable(R.drawable.download)).into(lineIV);
+            }else {
+                StoreImagesUtil.downloadImg(f,lineModel.getImgKey());
+            }
         }else if(type[0].equals("content")){
             //lineTV.setTextAppearance(R.style.TextAppearance_AppCompat_Content);
             TextViewCompat.setTextAppearance(lineTV,R.style.TextAppearance_AppCompat_Content);
@@ -255,7 +265,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
 
     }
     private void switchTextType(EditText lineTV,String[] type){
-        lineTV.setBackgroundColor(Color.WHITE);
+        lineTV.setBackgroundColor(context.getActivity().getResources().getColor(R.color.pastel_orange));
         if(type.length>1){
             switch (Integer.parseInt(type[1])){
                 case 1:

@@ -18,8 +18,12 @@ public class StringBitmapUtil {
         return encodedImage;
     }
     public static Bitmap getBitmapFromString(String stringPicture) {
-        byte[] decodedString = Base64.decode(stringPicture, Base64.DEFAULT);
-        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-        return decodedByte;
+        if(stringPicture!=null) {
+            byte[] decodedString = Base64.decode(stringPicture, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            return decodedByte;
+        }else{
+            return null;
+        }
     }
 }

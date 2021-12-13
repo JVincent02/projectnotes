@@ -43,7 +43,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/noteDisplayTitleTV"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="@font/sansmed"
             android:paddingLeft="15dp"
@@ -54,6 +56,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/menuBtn"
             app:layout_constraintRight_toLeftOf="@+id/checkBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/shareBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingTop="6dp"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:paddingBottom="12dp"
+            android:src="@drawable/share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintLeft_toRightOf="@id/noteDisplayTitleTV"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,6 +83,7 @@
         app:layout_constraintTop_toBottomOf="@id/appBar">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/pastel_orange"
             android:id="@+id/noteContentRV"
             android:paddingBottom="100dp"
             android:scrollbars="vertical"
@@ -95,6 +112,7 @@
             android:id="@+id/drawerView"
             android:layout_width="200dp"
             android:layout_height="match_parent"
+            android:background="@color/pastel_orange"
             android:clickable="true"
             android:orientation="vertical"
             app:layout_constraintHorizontal_bias="0"
@@ -103,20 +121,14 @@
             app:layout_constraintWidth_percent="0.8">
 
             <LinearLayout
+                android:id="@+id/accountBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bottm_divider"
+                android:backgroundTint="@color/pastel_blue"
                 android:orientation="horizontal"
-                android:paddingTop="12dp">
+                android:paddingLeft="12dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="12dp"
-                    android:src="@drawable/cat"
-                    app:civ_border_color="#ccc"
-                    app:civ_border_width="0.5dp" />
 
                 <TextView
                     android:id="@+id/emailDisplayTV"
@@ -124,17 +136,36 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingLeft="5dp"
+                    android:paddingTop="12dp"
                     android:paddingBottom="8dp"
                     android:text="User's Name"
                     android:textSize="16dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/logout" />
+
 
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drawerRV"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/white" />
+
+            <Button
+                android:id="@+id/addNoteBtn"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="15dp"
+                android:backgroundTint="@color/pastel_blue"
+                android:text="Add Note"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@color/black" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -155,7 +186,7 @@
 
         <com.nambimobile.widgets.efab.ExpandableFab
             android:id="@+id/fabBtn"
-            app:efab_color="@color/white"
+            app:efab_color="@color/pastel_blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -219,6 +250,7 @@
         android:background="@drawable/light_divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sectionVP"
+        android:animateLayoutChanges="true"
         app:layout_constraintVertical_bias="1">
 
         <ImageView
@@ -243,7 +275,7 @@
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
             android:padding="12dp"
-            android:src="@drawable/underline"
+            android:src="@drawable/highlight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/italicsBtn"
             app:layout_constraintRight_toRightOf="parent"
@@ -266,5 +298,8 @@
 
 
     <include layout="@layout/layout_add_definition"/>
+    <include layout="@layout/layout_share"/>
+    <include layout="@layout/layout_add_newnote"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

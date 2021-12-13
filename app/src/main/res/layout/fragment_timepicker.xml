@@ -229,11 +229,11 @@
     <Button
         android:clickable="true"
         android:layout_marginTop="25dp"
-        android:background="@drawable/rounded_shape"
         android:id="@+id/addAlarmBtn"
         android:text="Add"
         android:layout_gravity="right"
         android:textColor="@color/darkgray"
+        android:backgroundTint="@color/pastel_blue"
         android:textAppearance="@style/TextAppearance.AppCompat.SubHeader"
         android:layout_width="75dp"
         android:layout_height="wrap_content"/>

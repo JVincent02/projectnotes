@@ -74,8 +74,9 @@ public class NoteContentTouchHelper extends ItemTouchHelper.Callback {
         int toPos = target.getAdapterPosition();
         //Collections.swap(lineModelList,fromPos,toPos);
         noteContentTouchListener.onItemMove(fromPos, toPos);
-        recyclerView.getAdapter().notifyItemMoved(fromPos, toPos);
-        return false;
+
+        //recyclerView.getAdapter().notifyItemMoved(fromPos, toPos);
+        return true;
     }
 
     @Override

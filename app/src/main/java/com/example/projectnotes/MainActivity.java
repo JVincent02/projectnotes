@@ -9,15 +9,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.projectnotes.Adapter.SectionsAdapter;
 import com.example.projectnotes.Fragment.NoteFragment;
 import com.example.projectnotes.Model.NoteModel;
 import com.example.projectnotes.Model.UserModel;
 import com.example.projectnotes.Utils.KeyboardUtil;
+import com.example.projectnotes.Utils.LoadFirebaseTask;
 import com.example.projectnotes.Utils.LockableViewPager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -51,20 +54,53 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
     UserModel userModel;
     FirebaseDatabase database;
     DatabaseReference userRef;
+    DatabaseReference rootRef;
     //List<NoteModel> notemodels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
         Bundle bundle = getIntent().getExtras();
         email = bundle.getString("email");
         uid = bundle.getString("uid");
         database = FirebaseDatabase.getInstance();
-        userRef = database.getReference("users");
+        rootRef = database.getReference();
+        userRef = database.getReference(uid);
+
+
+        //DatabaseReference nRef = database.getReference();
+        //nRef.orderByChild("email")
+
         gson = new Gson();
         userModel = readUser();
+        //Log.wtf("uidddd",rootRef.orderByChild("email"));
+        //database.getReference("test").setValue(userModel);
+
+
         updateFirebase();
+        userRef.child("sharedNotes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    for (DataSnapshot s :
+                            snapshot.getChildren()) {
+                        NoteModel n = s.getValue(NoteModel.class);
+                        userModel.addNote(n);
+                        s.getRef().removeValue();
+                    }
+                    saveUser(userModel);
+                    sectionsAdapter.noteFragment().updateNoteFragment(userModel.getNotes().size()-1);
+                    Toast.makeText(MainActivity.this, "A note was shared to you.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         //userModel.setNotes(readSavedNotes());
 
         //writeToFirebase(gson.toJson(userModel));
@@ -109,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
         user.setDate(getCurrentDate());
         String json = gson.toJson(user);
         try {
-            File file = new File(getFilesDir(), "User.json");
+            File file = new File(getFilesDir(), uid+".json");
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(json);
@@ -119,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
         }
     }
 
-    private void writeToFirebase(String json) {
+    private void writeToFirebase(UserModel json) {
         userRef.setValue(json);
     }
 
@@ -127,32 +163,32 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-/*                String snap = snapshot.getValue(String.class);
-                UserModel dbUser = gson.fromJson(snap,UserModel.class);
-                if(dbUser.getDate().compareTo(userModel.getDate())>0){
-                    userModel = dbUser;
-                }else if(dbUser.getDate().compareTo(userModel.getDate())<0){
-                    writeToFirebase(gson.toJson(userModel));
-                }*/
-                String snap = snapshot.getValue(String.class);
-                UserModel dbUser = gson.fromJson(snap, UserModel.class);
+                UserModel dbUser = null;
+                dbUser = snapshot.getValue(UserModel.class);
                 UserModel svUser = userModel;
                 if (dbUser == null) {
                     svUser.setDate(getCurrentDate());
-                    writeToFirebase(gson.toJson(svUser));
+                    writeToFirebase(svUser);
                 }else{
+                    List<NoteModel> sharedNotes = dbUser.getSharedNotes();
+                    dbUser.clearSharedNotes();
                     if(svUser.getDate()==null){
                         saveUser(dbUser);
                         userModel = dbUser;
-                        sectionsAdapter.noteFragment().updateNoteFragment();
+                        sectionsAdapter.noteFragment().updateNoteFragment(0);
                     }else{
-                        if(dbUser.getDate().compareTo(svUser.getDate())>0){
+                        writeToFirebase(userModel);
+/*                        if(dbUser.getDate().compareTo(svUser.getDate())>0){
                             saveUser(dbUser);
                             userModel = dbUser;
-                            sectionsAdapter.noteFragment().updateNoteFragment();
+                            //sectionsAdapter.noteFragment().updateNoteFragment(0);
                         }else if(dbUser.getDate().compareTo(svUser.getDate())<0){
-                            writeToFirebase(gson.toJson(userModel));
-                        }
+                            writeToFirebase(userModel);
+                        }*/
+                    }
+                    if(!sharedNotes.isEmpty()){
+                        userModel.addNotes(sharedNotes);
+                        sectionsAdapter.noteFragment().updateNoteFragment(0);
                     }
                 }
 
@@ -169,11 +205,14 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
     public String getEmail() {
         return email;
     }
+    public String getUid() {
+        return uid;
+    }
 
     private UserModel readUser() {
         String user = "";
         try {
-            File file = new File(getFilesDir(), "User.json");
+            File file = new File(getFilesDir(), uid+".json");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             StringBuilder stringBuilder = new StringBuilder();
@@ -223,6 +262,34 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
 //        Log.v("main","saved");
         saveUser(userModel);
         updateFirebase();
+    }
+
+    @Override
+    public void onSharedNotes(int pos,String email) {
+        rootRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                UserModel shareduser = null;
+                if(snapshot.exists()) {
+                    shareduser= snapshot.getChildren().iterator().next().getValue(UserModel.class);
+                    if(shareduser!=null){
+                        shareduser.addSharedNote(userModel.getNotes().get(pos));
+                        DatabaseReference sharedRef = database.getReference(shareduser.getUid());
+                        sharedRef.setValue(shareduser);
+                    }{
+                        //Toast.makeText(MainActivity.this, "Can't find email", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Log.wtf("shaaared", "Doesnt exists");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     @Override

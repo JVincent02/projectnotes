@@ -17,6 +17,7 @@
         android:orientation="vertical" />
 
     <LinearLayout
+        android:backgroundTint="@color/pastel_orange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
@@ -79,6 +80,7 @@
 
             <Button
                 android:id="@+id/addDefConfirmBtn"
+                android:backgroundTint="@color/pastel_blue"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -87,6 +89,7 @@
                 android:textColor="@color/darkgray" />
 
             <Button
+                android:backgroundTint="@color/white"
                 android:id="@+id/addDefExitBtn"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"

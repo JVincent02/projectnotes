@@ -12,6 +12,9 @@ public class NoteModel {
         title = t;
         lines = ls;
     }
+    public NoteModel(){
+
+    }
 
     public String getTitle() {
         return title;
@@ -24,6 +27,7 @@ public class NoteModel {
     public static List<NoteModel> getSampleNotes() {
         List<NoteModel> newNoteModel = new ArrayList<NoteModel>();
         newNoteModel.add(new NoteModel("Home", LineModel.getSampleLines()));
+        newNoteModel.add(new NoteModel("First Note", LineModel.getSampleLines2()));
 /*        newNoteModel.add(new NoteModel("Test2", null));
         newNoteModel.add(new NoteModel("Test3", null));
         newNoteModel.add(new NoteModel("Test4", null));*/

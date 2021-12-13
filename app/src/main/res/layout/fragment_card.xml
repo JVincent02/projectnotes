@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/pastel_orange"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,12 +30,13 @@
         </ImageView>
 
         <TextView
-            android:text="Auto-Generated Flash Cards"
+            android:text="Flashcards"
             android:paddingLeft="15dp"
             android:paddingBottom="8dp"
             android:textColor="@color/darkgray"
             android:textSize="@dimen/Note_Title_Appbar"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
+            app:layout_constraintHorizontal_bias="0"
             android:layout_height="match_parent"
             app:layout_constraintLeft_toRightOf="@+id/cardIV"
             app:layout_constraintRight_toRightOf="parent"
@@ -42,6 +44,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:fontFamily="@font/sansmed"
             />
+        <ImageView
+            android:id="@+id/cardBackBtn"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            android:src="@drawable/back"
+            android:layout_marginRight="15dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="6dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -54,7 +70,6 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardTitle" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="gone"
         android:scrollbars="vertical"

@@ -4,7 +4,7 @@
     android:id="@+id/lineCon"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/pastel_orange"
     android:animateLayoutChanges="true"
     >
     <EditText

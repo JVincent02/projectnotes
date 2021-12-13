@@ -1,23 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Projectnotes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Projectnotes" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/white</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/pastel_orange</item>
+        <item name="colorOnPrimary">@color/pastel_orange</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/black</item>
         <item name="colorSecondaryVariant">@color/black</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:navigationBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar">true</item>
 
     </style>
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:colorAccent">@color/darkgray</item>
+        <item name="android:textColor">@color/darkgray</item>
+        <item name="android:textColorPrimary">@color/darkgray</item>
+    </style>
     <style name="Theme.Login" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/pastel_orange</item>
-
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="colorSecondary">@color/pastel_blue</item>
 
         <item name="colorAccent">@color/pastel_blue</item>

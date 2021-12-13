@@ -1,21 +1,27 @@
 package com.example.projectnotes.Fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectnotes.Adapter.LineAdapter;
 import com.example.projectnotes.Adapter.NoteAdapter;
+import com.example.projectnotes.LoginActivity;
 import com.example.projectnotes.MainActivity;
 import com.example.projectnotes.Model.LineModel;
 import com.example.projectnotes.Model.NoteModel;
@@ -30,9 +37,12 @@ import com.example.projectnotes.R;
 import com.example.projectnotes.Utils.AnimUtil;
 import com.example.projectnotes.Utils.NoteContentTouchHelper;
 import com.example.projectnotes.Utils.NoteContentTouchListener;
+import com.example.projectnotes.Utils.StoreImagesUtil;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,9 +53,24 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     View drawerView;
     //View notesCon;
     View drawerCon;
+    View accountBtn;
     View appBar;
     View drawerBgView;
     TextView emailDisplayTV;
+    TextView noteDisplayTitleTV;
+    //for share
+    View shareBtn;
+    View shareCon;
+    EditText emailShareTV;
+    View shareConfirmBtn;
+    View shareExitBtn;
+    TextView shareNoteTitleTV;
+    //for add note
+    View addNoteBtn;
+    View addNewNoteCon;
+    EditText addNewNoteTV;
+    View addnewNoteConfirmBtn;
+    View addnewNoteExitBtn;
     //For keyboard buttons
     View italicsBtn;
     View boldBtn;
@@ -82,6 +107,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     boolean isFabClicked = false;
     boolean editOnly = false;
     int rvpos=-1;
+    int notepos=0;
     public static final int PICK_IMG = 1;
 
     public static NoteFragment newInstance() {
@@ -107,11 +133,26 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         //notesCon = root.findViewById(R.id.notesCon);
         drawerBgView = root.findViewById(R.id.drawerBgView);
         drawerCon = root.findViewById(R.id.drawerCon);
+        accountBtn = root.findViewById(R.id.accountBtn);
         emailDisplayTV = root.findViewById(R.id.emailDisplayTV);
         appBar= root.findViewById(R.id.appBar);
         drawerView = root.findViewById(R.id.drawerView);
         drawerRV= root.findViewById(R.id.drawerRV);
         noteContentRV = root.findViewById(R.id.noteContentRV);
+        noteDisplayTitleTV = root.findViewById(R.id.noteDisplayTitleTV);
+        //for share
+        shareBtn = root.findViewById(R.id.shareBtn);
+        shareCon = root.findViewById(R.id.shareCon);
+        shareConfirmBtn = root.findViewById(R.id.shareConfirmBtn);
+        shareExitBtn = root.findViewById(R.id.shareExitBtn);
+        emailShareTV = root.findViewById(R.id.emailShareTV);
+        shareNoteTitleTV = root.findViewById(R.id.shareNoteTitleTV);
+        //for add new note
+        addNewNoteCon = root.findViewById(R.id.addNewNoteCon);
+        addNewNoteTV = root.findViewById(R.id.addNewNoteTV);
+        addnewNoteConfirmBtn = root.findViewById(R.id.addNewNoteConfirmBtn);
+        addnewNoteExitBtn = root.findViewById(R.id.addNewNoteExitBtn);
+        addNoteBtn = root.findViewById(R.id.addNoteBtn);
         //for keyboard buttons
         italicsBtn = root.findViewById(R.id.italicsBtn);
         boldBtn = root.findViewById(R.id.boldBtn);
@@ -134,6 +175,15 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         menuBtn.setOnClickListener(this);
         checkBtn.setOnClickListener(this);
         drawerCon.setOnClickListener(this);
+        accountBtn.setOnClickListener(this);
+        //for share
+        shareBtn.setOnClickListener(this);
+        shareConfirmBtn.setOnClickListener(this);
+        shareExitBtn.setOnClickListener(this);
+        //for add new note
+        addnewNoteExitBtn.setOnClickListener(this);
+        addnewNoteConfirmBtn.setOnClickListener(this);
+        addNoteBtn.setOnClickListener(this);
         //for keyboard buttons
         italicsBtn.setOnClickListener(this);
         boldBtn.setOnClickListener(this);
@@ -151,19 +201,19 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         //notesCon.setOnClickListener(this);
 
-        noteAdapter = new NoteAdapter(this,noteModels);
+        noteAdapter = new NoteAdapter(this,noteModels,0);
         drawerRV.setAdapter(noteAdapter);
         drawerRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         noteContentTouchHelper = new NoteContentTouchHelper();
         noteContentTouchHelper.setNoteContentTouchListener(this);
 
-        lineModelList = noteModels.get(0).getLines();
+        lineModelList = noteModels.get(notepos).getLines();
 
         lineAdapter = new LineAdapter(this,lineModelList);
         noteContentRV.setAdapter(lineAdapter);
         noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        noteContentRV.setItemViewCacheSize(50);
+        noteContentRV.setItemViewCacheSize(20);
         ItemTouchHelper contentTouchHelper = new ItemTouchHelper(noteContentTouchHelper);
         contentTouchHelper.attachToRecyclerView(noteContentRV);
 
@@ -186,8 +236,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                     drawerCon.requestFocus();
                 break;
             case R.id.drawerCon:
-
-                    AnimUtil.collapse(drawerView,drawerCon,drawerBgView,300, 0);
+                AnimUtil.collapse(drawerView,drawerCon,drawerBgView,300, 0);
                 break;
             case R.id.checkBtn:
                 clearEditMode();
@@ -244,31 +293,75 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 keyboardStates[2]=!keyboardStates[2];
                 updateKeys();
                 break;
+            case R.id.shareBtn:
+                shareCon.setVisibility(View.VISIBLE);
+                shareNoteTitleTV.setText("Share - "+noteModels.get(notepos).getTitle());
+                emailShareTV.setText("");
+                break;
+            case R.id.shareConfirmBtn:
+                noteFragmentListener.onSharedNotes(notepos,emailShareTV.getText().toString());
+                shareCon.setVisibility(View.GONE);
+                break;
+            case R.id.shareExitBtn:
+                shareCon.setVisibility(View.GONE);
+                break;
+            case R.id.addNewNoteConfirmBtn:
+                if(addNewNoteTV.getText().toString().length()>0) {
+                    focused=addNewNoteTV;
+                    clearEditMode();
+                    noteModels.add(new NoteModel(addNewNoteTV.getText().toString(),new ArrayList<>()));
+                    noteFragmentListener.onDataChanged();
+                    noteAdapter.notifyItemInserted(noteModels.size()-1);
+                    updateNoteFragment(noteModels.size()-1);
+                    addNewNoteCon.setVisibility(View.GONE);
+                }else{
+                    addNewNoteTV.setError("Title cannot be empty");
+                }
+                break;
+            case R.id.addNewNoteExitBtn:
+                focused=addNewNoteTV;
+                clearEditMode();
+                addNewNoteCon.setVisibility(View.GONE);
+                break;
+            case R.id.addNoteBtn:
+                addNewNoteCon.setVisibility(View.VISIBLE);
+                addNewNoteTV.setText("");
+                break;
+            case R.id.accountBtn:
+                AlertDialog asksignout = AskSignOut();
+                asksignout.show();
+                break;
         }
     }
-    public void updateNoteFragment(){
+
+    public void updateNoteFragment(int pos){
         if(ready) {
             noteModels = mainActivity.getNoteModels();
-            noteAdapter = new NoteAdapter(this,noteModels);
-            drawerRV.setAdapter(noteAdapter);
+            noteAdapter = new NoteAdapter(this,noteModels,0);
+            drawerRV.setAdapter(null);
+            drawerRV.setLayoutManager(null);
             drawerRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
+            drawerRV.setAdapter(noteAdapter);
 
             noteContentTouchHelper = new NoteContentTouchHelper();
             noteContentTouchHelper.setNoteContentTouchListener(this);
 
-            lineModelList = noteModels.get(0).getLines();
-
+            lineModelList = noteModels.get(pos).getLines();
+            notepos = pos;
             lineAdapter = new LineAdapter(this,lineModelList);
+            noteContentRV.setAdapter(null);
+            noteContentRV.setLayoutManager(null);
             noteContentRV.setAdapter(lineAdapter);
             noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
-            noteContentRV.setItemViewCacheSize(50);
-            ItemTouchHelper contentTouchHelper = new ItemTouchHelper(noteContentTouchHelper);
-            contentTouchHelper.attachToRecyclerView(noteContentRV);
+            //noteContentRV.setItemViewCacheSize(30);
+            //ItemTouchHelper contentTouchHelper = new ItemTouchHelper(noteContentTouchHelper);
+            //contentTouchHelper.attachToRecyclerView(noteContentRV);
 
             noteFragmentListener = (NoteFragmentListener) getActivity();
-            String email = ((MainActivity)getActivity()).getEmail().split("@")[0]+"'s Notes";
-            emailDisplayTV.setText(email);
+/*            String email = ((MainActivity)getActivity()).getEmail().split("@")[0]+"'s Notes";
+            emailDisplayTV.setText(email);*/
 
+            noteDisplayTitleTV.setText(noteModels.get(pos).getTitle());
             Log.wtf("etoerror","pumasoknoob");
         }
     }
@@ -292,8 +385,26 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
             lineModelList.get(rvpos).setType(s);
             lineAdapter.notifyItemChanged(rvpos);
         }
+        updateKeyColor();
         Log.wtf("keybstate",lineModelList.get(rvpos).getType());
         lineAdapter.notifyItemChanged(rvpos);
+    }
+    private void updateKeyColor(){
+        if(keyboardStates[0]){
+            italicsBtn.setBackground(getResources().getDrawable(R.color.pastel_blue));
+        }else{
+            italicsBtn.setBackground(getResources().getDrawable(R.color.white));
+        }
+        if(keyboardStates[1]){
+            boldBtn.setBackground(getResources().getDrawable(R.color.pastel_blue));
+        }else{
+            boldBtn.setBackground(getResources().getDrawable(R.color.white));
+        }
+        if(keyboardStates[2]){
+            underlineBtn.setBackground(getResources().getDrawable(R.color.pastel_blue));
+        }else{
+            underlineBtn.setBackground(getResources().getDrawable(R.color.white));
+        }
     }
     public boolean[] getKeyboardStates(){
         return keyboardStates;
@@ -339,7 +450,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         noteContentRV.scrollToPosition(lineModelList.size()-1);
     }
     private void addImage(Bitmap img){
-        lineModelList.add(new LineModel("image",img));
+        lineModelList.add(new LineModel(StoreImagesUtil.saveImage(mainActivity,mainActivity.getUid(),img)));
         noteFragmentListener.onDataChanged();
         lineAdapter.notifyItemInserted(lineModelList.size() - 1);
         noteContentRV.scrollToPosition(lineModelList.size()-1);
@@ -358,11 +469,16 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     @Override
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(lineModelList,fromPos,toPos);
+        lineAdapter.notifyItemMoved(fromPos,toPos);
         noteFragmentListener.onDataChanged();
     }
 
     @Override
     public void onItemSwiped(int pos) {
+        String key = lineModelList.get(pos).getImgKey();
+        if(key!=null){
+            StoreImagesUtil.removeImage(mainActivity,mainActivity.getUid(),key);
+        }
         lineModelList.remove(pos);
         lineAdapter.notifyItemRemoved(pos);
         noteFragmentListener.onDataChanged();
@@ -402,6 +518,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         checkBtn.setVisibility(View.VISIBLE);
         keyboardCon.setVisibility(View.VISIBLE);
         focused = v;
+        updateKeyColor();
         Log.v("editmodecleared","yes" );
     }
 
@@ -422,13 +539,79 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
     @Override
     public void onNoteTitleClicked(int pos) {
-
+        updateNoteFragment(pos);
+        AnimUtil.collapse(drawerView,drawerCon,drawerBgView,300, 0);
+        Log.wtf("anoerror",String.valueOf(pos));
     }
 
+    @Override
+    public void onNoteDeleteClicked(int pos) {
+        AlertDialog deleteBox = AskDeleteNote(pos);
+        deleteBox.show();
+    }
+    private AlertDialog AskDeleteNote(int pos)
+    {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getContext())
+                // set message, title, and icon
+                .setTitle("Delete")
+                .setMessage("Do you want to Delete - "+noteModels.get(pos).getTitle()+ " ?")
+                .setIcon(R.drawable.delete)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        noteModels.remove(pos);
+                        noteAdapter.notifyItemRemoved(pos);
+                        dialog.dismiss();
+                        noteFragmentListener.onDataChanged();
+                    }
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
+    }
+
+    private AlertDialog AskSignOut()
+    {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getContext())
+                // set message, title, and icon
+                .setTitle("Sign Out")
+                .setMessage("Do you want to Sign out?")
+                .setIcon(R.drawable.logout)
+                .setPositiveButton("Sign Out", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
+    }
     public interface NoteFragmentListener{
         void onEditTextClicked();
         void onKeyboardRelease();
         void onDataChanged();
+        void onSharedNotes(int pos,String email);
     }
 
 }

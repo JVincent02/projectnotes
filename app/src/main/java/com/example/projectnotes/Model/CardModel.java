@@ -36,7 +36,7 @@ public class CardModel {
         List<CardModel> cardModels = new ArrayList<CardModel>();
 
         for(int i =0;i<lines.size();i++){
-            if(lines.get(i).getType()=="definition"){
+            if(lines.get(i).getType().split(",")[0].equals("definition")){
                 String[] qa = lines.get(i).getContent().split(",");
                 cardModels.add(new CardModel(qa[1],qa[0]));
             }
