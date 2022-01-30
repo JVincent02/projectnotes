@@ -1,5 +1,7 @@
 package com.example.projectnotes.Fragment;
 
+import static java.util.stream.Collectors.toList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -39,19 +41,25 @@ import com.example.projectnotes.Utils.NoteContentTouchHelper;
 import com.example.projectnotes.Utils.NoteContentTouchListener;
 import com.example.projectnotes.Utils.StoreImagesUtil;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class NoteFragment extends Fragment implements View.OnClickListener, NoteContentTouchListener, LineAdapter.LineAdapterListener, NoteAdapter.NoteAdapterListener {
 
     ImageView menuBtn;
     ImageView checkBtn;
+    ImageView undoBtn;
     View drawerView;
-    //View notesCon;
+    View notesCon;
     View drawerCon;
     View accountBtn;
     View appBar;
@@ -101,7 +109,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     NoteFragmentListener noteFragmentListener;
     MainActivity mainActivity;
     List<NoteModel> noteModels;
-
+    ArrayList<ArrayList<LineModel>> historyLineModels;
+    ArrayList<LineModel> baseHistory;
     boolean[] keyboardStates = {false,false,false};
     boolean ready=false;
     boolean isFabClicked = false;
@@ -130,7 +139,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         menuBtn = root.findViewById(R.id.menuBtn);
         checkBtn = root.findViewById(R.id.checkBtn);
-        //notesCon = root.findViewById(R.id.notesCon);
+        undoBtn = root.findViewById(R.id.undoBtn);
+        notesCon = root.findViewById(R.id.notesCon);
         drawerBgView = root.findViewById(R.id.drawerBgView);
         drawerCon = root.findViewById(R.id.drawerCon);
         accountBtn = root.findViewById(R.id.accountBtn);
@@ -174,6 +184,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         menuBtn.setOnClickListener(this);
         checkBtn.setOnClickListener(this);
+        undoBtn.setOnClickListener(this);
         drawerCon.setOnClickListener(this);
         accountBtn.setOnClickListener(this);
         //for share
@@ -209,11 +220,25 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         noteContentTouchHelper.setNoteContentTouchListener(this);
 
         lineModelList = noteModels.get(notepos).getLines();
-
+        historyLineModels = new ArrayList<ArrayList<LineModel>>();
+        baseHistory = deepCopy(lineModelList);
+        //addHistory();
         lineAdapter = new LineAdapter(this,lineModelList);
         noteContentRV.setAdapter(lineAdapter);
         noteContentRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
         noteContentRV.setItemViewCacheSize(20);
+/*        noteContentRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int scrollY = noteContentRV.computeVerticalScrollOffset();
+                // mAppBarBg corresponds to your light green background view
+                notesCon.setTranslationY(-scrollY);
+                // I also have a drop shadow on the Toolbar, this removes the
+                // shadow when the list is scrolled to the top
+                //mToolbarCard.setCardElevation(scrollY <= 0 ? 0 : toolbarElevation);
+            }
+        });*/
         ItemTouchHelper contentTouchHelper = new ItemTouchHelper(noteContentTouchHelper);
         contentTouchHelper.attachToRecyclerView(noteContentRV);
 
@@ -240,7 +265,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 break;
             case R.id.checkBtn:
                 clearEditMode();
-                noteFragmentListener.onDataChanged();
+                //noteFragmentListener.onDataChanged();
+                onCollectDataChanged();
                 noteFragmentListener.onKeyboardRelease();
                 noteContentTouchHelper.setDraggable(true);
                 break;
@@ -263,12 +289,14 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 isFabClicked=true;
                 break;
             case R.id.addDefConfirmBtn:
-                if(!editOnly) addLine("definition",getDef());
-                else editLine();
-                addDefCon.setVisibility(View.GONE);
-                focused = addDefCon;
-                clearEditMode();
-                editOnly=false;
+                if(checkIfDefFilled()) {
+                    if (!editOnly) addLine("definition", getDef());
+                    else editLine();
+                    addDefCon.setVisibility(View.GONE);
+                    focused = addDefCon;
+                    clearEditMode();
+                    editOnly = false;
+                }
                 break;
             case R.id.addDefExitBtn:
                 addDefCon.setVisibility(View.GONE);
@@ -310,9 +338,10 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                     focused=addNewNoteTV;
                     clearEditMode();
                     noteModels.add(new NoteModel(addNewNoteTV.getText().toString(),new ArrayList<>()));
-                    noteFragmentListener.onDataChanged();
+                    //noteFragmentListener.onDataChanged();
+                    onCollectDataChanged();
                     noteAdapter.notifyItemInserted(noteModels.size()-1);
-                    updateNoteFragment(noteModels.size()-1);
+                    updateNoteFragment(noteModels.size()-1,0);
                     addNewNoteCon.setVisibility(View.GONE);
                 }else{
                     addNewNoteTV.setError("Title cannot be empty");
@@ -331,10 +360,47 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                 AlertDialog asksignout = AskSignOut();
                 asksignout.show();
                 break;
+            case R.id.undoBtn:
+/*                Log.wtf("histsize","1:"+String.valueOf(historyLineModels.size()));
+                if(!historyLineModels.isEmpty())
+                    historyLineModels.remove(historyLineModels.size() - 1);
+                Log.wtf("histsize","2:"+String.valueOf(historyLineModels.size()));
+                if(!historyLineModels.isEmpty()) {
+                    lineModelList = historyLineModels.get(historyLineModels.size() - 1);
+                    if(lineModelList.size()>2) {
+                        //historyLineModels.remove(historyLineModels.size() - 1);
+                    }
+                    Log.wtf("histsize","3:"+String.valueOf(historyLineModels.size()));
+                    updateNoteFragment(notepos,1);
+                    //lineAdapter.notifyDataSetChanged();
+                }*/
+
+                //if(lineModelList.size()>0) {
+                    //historyLineModels.remove(historyLineModels.size() - 1);
+                    //lineModelList = historyLineModels.get(historyLineModels.size() - 1);
+                //}
+                if(historyLineModels.isEmpty()){
+                    Log.wtf("histsize","1:"+String.valueOf(historyLineModels.size()));
+                    lineModelList = baseHistory;
+                }else if(historyLineModels.size()==1){
+                    Log.wtf("histsize","2:"+String.valueOf(historyLineModels.size()));
+                    lineModelList = baseHistory;
+                    historyLineModels.remove(0);
+                }else if(historyLineModels.size()>1){
+                    historyLineModels.remove(historyLineModels.size()-1);
+                    lineModelList = historyLineModels.get(historyLineModels.size() - 1);
+                }
+                updateNoteFragment(notepos,1);
+                if(historyLineModels.isEmpty()) {
+                    undoBtn.setVisibility(View.GONE);
+                    baseHistory = deepCopy(lineModelList);
+                    Log.wtf("histsize","3:"+String.valueOf(historyLineModels.size()));
+                }
+                break;
         }
     }
 
-    public void updateNoteFragment(int pos){
+    public void updateNoteFragment(int pos,int flag){
         if(ready) {
             noteModels = mainActivity.getNoteModels();
             noteAdapter = new NoteAdapter(this,noteModels,0);
@@ -345,8 +411,11 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
             noteContentTouchHelper = new NoteContentTouchHelper();
             noteContentTouchHelper.setNoteContentTouchListener(this);
-
-            lineModelList = noteModels.get(pos).getLines();
+            if(flag!=1) {
+                lineModelList = noteModels.get(pos).getLines();
+                addHistory();
+            }
+            //historyLineModels.add(lineModelList);
             notepos = pos;
             lineAdapter = new LineAdapter(this,lineModelList);
             noteContentRV.setAdapter(null);
@@ -365,6 +434,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
             Log.wtf("etoerror","pumasoknoob");
         }
     }
+
     private void updateKeys(){
         String s = lineModelList.get(rvpos).getType().split(",")[0];
         if(keyboardStates[1]&&keyboardStates[2]&&keyboardStates[0]) {
@@ -445,13 +515,27 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
     }
     private void addLine(String type,String con){
         lineModelList.add(new LineModel(type,con));
-        noteFragmentListener.onDataChanged();
+        //noteFragmentListener.onDataChanged();
+        onCollectDataChanged();
         lineAdapter.notifyItemInserted(lineModelList.size() - 1);
         noteContentRV.scrollToPosition(lineModelList.size()-1);
     }
+    private boolean checkIfDefFilled(){
+        boolean isOkay=true;
+        if(termTV.getText().toString().equals("")){
+            isOkay=false;
+            termTV.setError("Term cannot be empty.");
+        }
+        if(definitionTV.getText().toString().equals("")){
+            isOkay=false;
+            definitionTV.setError("Definition cannot be empty.");
+        }
+        return isOkay;
+    }
     private void addImage(Bitmap img){
         lineModelList.add(new LineModel(StoreImagesUtil.saveImage(mainActivity,mainActivity.getUid(),img)));
-        noteFragmentListener.onDataChanged();
+        //noteFragmentListener.onDataChanged();
+        onCollectDataChanged();
         lineAdapter.notifyItemInserted(lineModelList.size() - 1);
         noteContentRV.scrollToPosition(lineModelList.size()-1);
         clearEditMode();
@@ -464,13 +548,15 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         }
         noteContentRV.clearFocus();
         checkBtn.setVisibility(View.GONE);
+        undoBtn.setVisibility(View.VISIBLE);
         keyboardCon.setVisibility(View.GONE);
     }
     @Override
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(lineModelList,fromPos,toPos);
         lineAdapter.notifyItemMoved(fromPos,toPos);
-        noteFragmentListener.onDataChanged();
+        //noteFragmentListener.onDataChanged();
+        onCollectDataChanged();
     }
 
     @Override
@@ -481,7 +567,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         }
         lineModelList.remove(pos);
         lineAdapter.notifyItemRemoved(pos);
-        noteFragmentListener.onDataChanged();
+        //noteFragmentListener.onDataChanged();
+        onCollectDataChanged();
     }
     private void updateKeyStates(){
         String[] li = lineModelList.get(rvpos).getType().split(",");
@@ -516,6 +603,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
         noteFragmentListener.onEditTextClicked();
         noteContentTouchHelper.setDraggable(false);
         checkBtn.setVisibility(View.VISIBLE);
+        undoBtn.setVisibility(View.GONE);
         keyboardCon.setVisibility(View.VISIBLE);
         focused = v;
         updateKeyColor();
@@ -539,7 +627,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
     @Override
     public void onNoteTitleClicked(int pos) {
-        updateNoteFragment(pos);
+        updateNoteFragment(pos,0);
         AnimUtil.collapse(drawerView,drawerCon,drawerBgView,300, 0);
         Log.wtf("anoerror",String.valueOf(pos));
     }
@@ -562,7 +650,8 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
                         noteModels.remove(pos);
                         noteAdapter.notifyItemRemoved(pos);
                         dialog.dismiss();
-                        noteFragmentListener.onDataChanged();
+                        //noteFragmentListener.onDataChanged();
+                        onCollectDataChanged();
                     }
 
                 })
@@ -607,6 +696,21 @@ public class NoteFragment extends Fragment implements View.OnClickListener, Note
 
         return myQuittingDialogBox;
     }
+    private void onCollectDataChanged(){
+        addHistory();
+        noteFragmentListener.onDataChanged();
+    }
+    private void addHistory(){
+        historyLineModels.add(deepCopy(lineModelList));
+    }
+    private ArrayList<LineModel> deepCopy(List<LineModel> l){
+        List<LineModel> newLineModelList;
+        Gson gson = new Gson();
+        String list = gson.toJson(l);
+        newLineModelList =  Arrays.asList(new GsonBuilder().create().fromJson(list, LineModel[].class));
+        return new ArrayList<LineModel>(newLineModelList);
+    }
+
     public interface NoteFragmentListener{
         void onEditTextClicked();
         void onKeyboardRelease();

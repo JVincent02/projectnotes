@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                         s.getRef().removeValue();
                     }
                     saveUser(userModel);
-                    sectionsAdapter.noteFragment().updateNoteFragment(userModel.getNotes().size()-1);
+                    sectionsAdapter.noteFragment().updateNoteFragment(userModel.getNotes().size()-1,0);
                     Toast.makeText(MainActivity.this, "A note was shared to you.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                     if(svUser.getDate()==null){
                         saveUser(dbUser);
                         userModel = dbUser;
-                        sectionsAdapter.noteFragment().updateNoteFragment(0);
+                        sectionsAdapter.noteFragment().updateNoteFragment(0,0);
                     }else{
                         writeToFirebase(userModel);
 /*                        if(dbUser.getDate().compareTo(svUser.getDate())>0){
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Note
                     }
                     if(!sharedNotes.isEmpty()){
                         userModel.addNotes(sharedNotes);
-                        sectionsAdapter.noteFragment().updateNoteFragment(0);
+                        sectionsAdapter.noteFragment().updateNoteFragment(0,0);
                     }
                 }
 

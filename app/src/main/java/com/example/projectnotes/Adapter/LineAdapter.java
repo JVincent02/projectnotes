@@ -57,7 +57,6 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
             lineIV = itemView.findViewById(R.id.lineIV);
             lineCon = itemView.findViewById(R.id.lineCon);
         }
-
     }
 
     public LineAdapter(NoteFragment context,List<LineModel> lineModelList){
@@ -265,7 +264,8 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.ViewHolder> {
 
     }
     private void switchTextType(EditText lineTV,String[] type){
-        lineTV.setBackgroundColor(context.getActivity().getResources().getColor(R.color.pastel_orange));
+       // lineTV.setBackgroundColor(context.getActivity().getResources().getColor(R.color.pastel_orange));
+        lineTV.setBackgroundColor(0x00000000);
         if(type.length>1){
             switch (Integer.parseInt(type[1])){
                 case 1:

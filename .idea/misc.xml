@@ -7,7 +7,10 @@
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/cursor_content.xml" value="0.25462962962962965" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/light_divider.xml" value="0.2657407407407407" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/none_found.xml" value="0.2657407407407407" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/note_bg.xml" value="0.27685185185185185" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_border_gray.xml" value="0.15260416666666668" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_shape.xml" value="0.13333333333333333" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/drawable/rounded_shape_white.xml" value="0.15260416666666668" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/activity_main.xml" value="0.2978986402966625" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/adapter_card.xml" value="0.26875" />
@@ -16,7 +19,7 @@
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/card_back.xml" value="0.13958333333333334" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_alarm.xml" value="0.18" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_card.xml" value="0.33" />
-        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.25" />
+        <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_note.xml" value="0.22" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_sign.xml" value="0.25" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/fragment_timepicker.xml" value="0.26875" />
         <entry key="..\:/Users/Vincent/AndroidStudioProjects/projectnotes/app/src/main/res/layout/layout_add_definition.xml" value="0.21014492753623187" />
